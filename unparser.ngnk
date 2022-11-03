@@ -90,9 +90,9 @@ addspaces:{
 unparse:,/addspaces f@
 
 
-/ =====
-/ tests
-/ =====
+/ #############
+/ ##  tests  ##
+/ #############
 
 / TODO: make this autodetect if being run as main (vs import), and enable if main
 test:{$[y~unparse `p x;;`0:"[FAIL] GOT ",(unparse `p x)," NEED ",y]}
