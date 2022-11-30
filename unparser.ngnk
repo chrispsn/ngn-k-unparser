@@ -75,11 +75,11 @@ advarg:{[adv;x]
                  (`u=@x)&(')~adv; ,-1_$x  / +:' is +' if used as monad
                  |/(`u=@x; `v=@x; `w=@*x; mexpr x); f x
                  wrap f x]
-        (left;,$adv)}
+        ,/(left;,$adv)}
 
-dyad:{,/$[`w=@*x; advarg . x  / TODO what about (')', \\, etc?
-          (~`w=@**x)&(~|/^`A`S?@'x)|`i`i~_@'x; (wrap;::)@'(M;R)@'x
-          (M;R)@'x]}@
+dyad:{$[`w=@*x; advarg . x  / TODO what about (')', \\, etc?
+        (~`w=@**x)&(~|/^`A`S?@'x)|`i`i~_@'x; ,/(wrap;::)@'(M;R)@'x
+        ,/(M;R)@'x]}@
 
 f:{$[EMPTY~x; ,""
      ~^`i`f`c`o?_@x; ,`k x
