@@ -95,11 +95,12 @@ f:{$[EMPTY~x; ,""
 / Insert spaces
 
 addspaces:{
-  names:|/(4 3 4;6 3 4)~/:\:" n: a a "'{(*y;*|y;*x)}':x
-  space:"n: a a "@"0:;A[a{"'{(*|y;*x)}':x
-  space:~names|^("n:";"aa";"na";"an";"nn")?space
-  space[&1&#x]:1
-  " "/,/'(&space)_x}
+  classes:"n: a a "@"0:;A[a{"'{(*y;*|y;*x)}':x
+  notassgt:^("aa:";"an:")?classes
+  disamb:~^("n:";"aa";"na";"an";"nn")?1_'classes
+  disamb&:notassgt
+  disamb[&1&#x]:1
+  " "/,/'(&disamb)_x}
 
 
 / Main entry point
