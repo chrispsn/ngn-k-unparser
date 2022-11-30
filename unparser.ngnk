@@ -50,42 +50,59 @@ need different parse impl?:
 
 \d unparser
 
+
 EMPTY:*|`p"1+"
 LIST:*`p"(1;1)"
 data:~^`i`f`c`s`o?_@:
-noun:{(LIST~*x)|data x}  / TODO better name?
-mexpr:{(1=*&(|x)~\:EMPTY)|(3<#x)|noun@*x}
-wrap:{(,,"("),x,,,")"}
-sep:{@[(#i)#,,x;&~i:2!!-1+2*#y;:;y]}
+mexpr:{|/(1=*&(|x)~\:EMPTY;3<#x;LIST~**x;data@*x)}
+comp:{(2<#x)&(')~*x}
 
-L:{$[(mexpr x)|noun x; ,f x; wrap f x]}
-R:{$[(EMPTY~x)|^`u`v?@x; ,f x; wrap f x]}
-M:{$[|/(`w=@*x; ~^`u`v?@x; mexpr x); ,f x
+
+/ All fns below return a list of strings
+
+wrap:{(,,"("),x,,,")"}
+sep:{,/@[(#i)#,,,x;&~i:2!!-1+2*#y;:;y]}
+
+L:{$[mexpr x; f x; wrap f x]}
+R:{$[((x~*x)|~`w=@*x)&(EMPTY~x)|^`u`v?@x; f x; wrap f x]}
+M:{$[comp x; wrap f x
+     `u=@x; ,-1_$x  / remove colon from monads
+     |/(EMPTY~$[2<#x; x 2; +]; `v=@x; `w=@*x; mexpr x); f x
      wrap f x]}
 
-/ moved from inline in f - hit a fn length limit?
-dyad:{
-  $[`w=@*x; ,/,/(M;R)@'|x  / TODO what about (')', \\, etc?
-    (~`w=@**x)&(~|/^`A`S?@'x)|`i`i~_@'x; ,/wrap[M@*x],R x 1
-    ,/,/(M;R)@'x]}
+advarg:{[adv;x]
+        left:$[comp x; wrap f x
+                 (`u=@x)&(')~adv; ,-1_$x  / +:' is +' if used as monad
+                 |/(`u=@x; `v=@x; `w=@*x; mexpr x); f x
+                 wrap f x]
+        (left;,$adv)}
 
-/ every pass generates a list of strings
+dyad:{,/$[`w=@*x; advarg . x  / TODO what about (')', \\, etc?
+          (~`w=@**x)&(~|/^`A`S?@'x)|`i`i~_@'x; (wrap;::)@'(M;R)@'x
+          (M;R)@'x]}@
+
 f:{$[EMPTY~x; ,""
      ~^`i`f`c`o?_@x; ,`k x
-     1=#x; $[^`S`A?@x; ,"",$x; ,`k@*x]
+     1=#x; $[^`S`A?@x; ,$x; ,`k@*x]
      2=#x; dyad x
-     LIST~*x; wrap sep[";"]@("",/)'o'1_x
-     (')~*x; ,/o'1_x
-     EMPTY~*x; ,/sep[,"\n"]@{$[(::)~x;,"";f x]}'1_x
-     mexpr x; ,/(f@*x; ,,"["; ,/sep[";"]1_o'x; ,,"]")
-     ,/,/(L;M;R)@'x 1 0 2]}  / infix
+     LIST~*x; wrap sep[";"]@o'1_x
+     comp x; ,/(M;o)@'1_x
+     EMPTY~*x; sep["\n"]@{$[(::)~x;,"";f x]}'1_x
+     mexpr x; ,/(f@*x; ,,"["; sep[";"]1_o'x; ,,"]")
+     ,/(L;M;R)@'x 1 0 2]}  / infix
+
+
+/ Insert spaces
 
 addspaces:{
   names:|/(4 3 4;6 3 4)~/:\:" n: a a "'{(*y;*|y;*x)}':x
   space:"n: a a "@"0:;A[a{"'{(*|y;*x)}':x
-  space:~names|^("n:";"aa";"na";"an")?space
+  space:~names|^("n:";"aa";"na";"an";"nn")?space
   space[&1&#x]:1
   " "/,/'(&space)_x}
+
+
+/ Main entry point
 
 unparse: addspaces f@
 
@@ -115,6 +132,7 @@ test["+/";"+/"]
 test["+/'";"+/'"]
 test[t;t:"(\"hi\";1)"]
 test["::";"::"]
+test["A1";"A1"]
 
 / assignments
 test["a:1";"a:1"]
@@ -123,7 +141,7 @@ test["A1:2";"A1:2"]
 test["(a;b):1 2";"(a;b):1 2"]
 
 / applications
-test["+1";"+:1"]
+test["+1";"+1"]
 test["1+";"1+"]
 test["(12)34";"(12)34"]
 test["12 34";"12 34"]
@@ -135,13 +153,16 @@ test["1+(2+3)";"1+2+3"]
 test["1+(2+3)+4";"1+(2+3)+4"]
 test["(1+2)3";"(1+2)3"]
 test["(1+2)'3";"(1+2)'3"]
-test["(+1)+1";"(+:1)+1"]  / TODO: remove colon
+test["(+1)+1";"(+1)+1"]
 test["+/1";"+/1"]
 test["+/\\";"+/\\"]
 test["1+/";"1+/"]
+test["(1+)/";"(1+)/"]
 test["{x}";"{x}"]
-test["++";"+:+"]          / TODO: remove colon
-test["+(+)";"+:(+)"]      / TODO: remove colon
+test["++:";"++:"]
+test["++";"++"]
+test["+(+:)";"+(+:)"]
+test["+(+)";"+(+)"]
 test["f[1;2]";"f[1;2]"]
 test["+[1;2]";"1+2"]
 test["(+/1 2)3";"(+/1 2)3"]
@@ -163,7 +184,7 @@ test["1+:/";"1+:/"]
 test["p+:/";"p+:/"]
 test["$[a;1;2;3;4]";"$[a;1;2;3;4]"]
 test["1 f'2";"1 f'2"]
-test["(++)2";"(+:+:)2"]  / TODO: remove colon; decide if this is OK
+test["(++)2";"(++:)2"]  / TODO: is this right?
 test["f'[a;b;c]";"f'[a;b;c]"]
 test["1 :/";"1 :/"]
 test["(1+2)#";"(1+2)#"]
@@ -172,8 +193,9 @@ test[":[;a]#";":[;a]#"]
 test["((1+2)+(3+4))#";"((1+2)+3+4)#"] 
 test["(1 2)f'";"1 2 f'"]
 test["3/1 2 3";"3/1 2 3"]
-test["1:`hello";"1:`hello"]  / TODO: remove second colon
+test["1:`hello";"1:`hello"]
 test["~(+/)";"~(+/)"]
+test["A1 2";"A1 2"]
 
 / multi-line
 test["a:1;";"a:1\n"]
@@ -182,10 +204,10 @@ test["a:1;b:2";"a:1\nb:2"]
 / real-world examples
 test:{$[x~unparse `p x;; `0:,/"[FAIL] GOT ",(f `p x)," NEED ",x]}
 
-test ",/(':'1+!:#:x)@\:x"  / ColTim sublists  / TODO: remove : from !:, #:
-test "@[A1;&:\";\"=A1;:;\",\"]"
+test ",/(':'1+!#x)@\\:x"  / ColTim sublists
+test "@[A1;&\";\"=A1;:;\",\"]"
 test ",\\'(1_)\\a"
-test "2*+/1+{x'y}/&:'\"><\"=\\:"  / TODO: remove : from &:
+test "2*+/1+{x'y}/&'\"><\"=\\:"
 test "char:\"<>{}!\"\nsm:\"BETS \"!(\"T BE  \";\"  BE  \";\"T TTST\";\"TTTTTT\";\"T BE  \")\n\ng:{tokens:(#char)^char?x\n   states:\" \"sm[;]\\tokens   (+/a*0>':a:+\-/\"BE\"=\:states    / alt: -1+1^\"E B\"?states\n    +/\"T\"=&':states)}\n\n(11846;6285)~g input\n"
 
 \d .
