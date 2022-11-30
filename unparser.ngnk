@@ -71,11 +71,11 @@ M:{$[comp x; wrap f x
      wrap f x]}
 
 advarg:{[adv;x]
-        left:$[comp x; wrap f x
-                 (`u=@x)&(')~adv; ,-1_$x  / +:' is +' if used as monad
-                 |/(`u=@x; `v=@x; `w=@*x; mexpr x); f x
-                 wrap f x]
-        ,/(left;,$adv)}
+  left:$[comp x; wrap f x
+        (`u=@x)&(')~adv; ,-1_$x  / +:' is +' if used as monad
+        |/(`u=@x; `v=@x; `w=@*x; mexpr x); f x
+        wrap f x]
+  ,/(left;,$adv)}
 
 dyad:{$[`w=@*x; advarg . x  / TODO what about (')', \\, etc?
         (~`w=@**x)&(~|/^`A`S?@'x)|`i`i~_@'x; ,/(wrap;::)@'(M;R)@'x
