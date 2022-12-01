@@ -198,7 +198,7 @@ test["a:1;";"a:1\n"]
 test["a:1;b:2";"a:1\nb:2"]
 
 / real-world examples
-test:{$[x~unparse `p x;; `0:,/"[FAIL] GOT ",(f `p x)," NEED ",x]}
+test:{$[x~unparse `p x;; `0:"[FAIL] GOT ",(unparse `p x)," NEED ",x]}
 
 test ",/(':'1+!#x)@\\:x"  / ColTim sublists
 test "@[A1;&\";\"=A1;:;\",\"]"
