@@ -51,7 +51,7 @@ need different parse impl?:
 
 EMPTY:*|`p"1+"
 LIST:*`p"(1;1)"
-mexpr:{|/(1=*&(|x)~\:EMPTY; 3<#x; LIST~**x; ~^`i`f`c`s`o?_@*x)}
+noun:{|/(1=*&(|x)~\:EMPTY; 3<#x; LIST~**x; ~^`i`f`c`s`o?_@*x)}
 comp:{(2<#x)&(')~*x}
 
 / All fns below return a list of strings
@@ -59,17 +59,17 @@ comp:{(2<#x)&(')~*x}
 wrap:{(,,"("),x,,,")"}
 sep:{,/@[(#i)#,,,x;&~i:2!!-1+2*#y;:;y]}
 
-L:{$[mexpr x; f x; wrap f x]}
+L:{$[noun x; f x; wrap f x]}
 R:{$[((x~*x)|~`w=@*x)&(EMPTY~x)|^`u`v?@x; f x; wrap f x]}
 M:{$[comp x; wrap f x
      `u=@x; ,-1_$x  / remove colon from monads
-     |/(EMPTY~$[2<#x; x 2; +]; `v=@x; `w=@*x; mexpr x); f x
+     |/(EMPTY~$[2<#x; x 2; +]; `v=@x; `w=@*x; noun x); f x
      wrap f x]}
 
 advarg:{[adv;x]
   left:$[comp x; wrap f x
         (`u=@x)&(')~adv; ,-1_$x  / +:' is +' if used as monad
-        |/(`u=@x; `v=@x; `w=@*x; mexpr x); f x
+        |/(`u=@x; `v=@x; `w=@*x; noun x); f x
         wrap f x]
   ,/(left;,$adv)}
 
@@ -84,7 +84,7 @@ f:{$[EMPTY~x; ,""
      LIST~*x; wrap sep[";"]@o'1_x
      comp x; ,/(M;o)@'1_x
      EMPTY~*x; sep["\n"]@{$[(::)~x;,"";f x]}'1_x
-     mexpr x; ,/(f@*x; ,,"["; sep[";"]1_o'x; ,,"]")
+     noun x; ,/(f@*x; ,,"["; sep[";"]1_o'x; ,,"]")
      ,/(L;M;R)@'x 1 0 2]}  / infix
 
 / Insert spaces
