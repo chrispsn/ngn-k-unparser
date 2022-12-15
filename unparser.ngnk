@@ -74,7 +74,8 @@ advarg:{[adv;x]
   ,/(left;,$adv)}
 
 dyad:{$[`w=@*x; advarg . x  / TODO what about (')', \\, etc?
-        (~`w=@**x)&(~|/^`A`S?@'x)|`i`i~_@'x; ,/(wrap;::)@'(M;R)@'x
+        (`s`s~_@'*'x)&&/~{x~*x}'x; ,/(wrap;::)@'(M;R)@'x
+        `i`i~_@'x; ,/(wrap;::)@'(M;R)@'x
         ,/(M;R)@'x]}@
 
 f:{$[EMPTY~x; ,""
@@ -173,6 +174,7 @@ test["(1)1";"(1)1"]
 test["(1 2)3";"(1 2)3"]
 test["(`a)`a";"(`a)`a"]
 test["(`a`b)`c";"(`a`b)`c"]
+test["(`a)`b`c";"(`a)`b`c"]
 test["`a`b 1";"`a`b 1"]
 test["+:/";"+:/"]
 test["1+:/";"1+:/"]
@@ -196,12 +198,13 @@ test["A1 2";"A1 2"]
 test["a:1;";"a:1\n"]
 test["a:1;b:2";"a:1\nb:2"]
 
-/ real-world examples
+/ real-world examples (test roundtrips)
 test:{$[x~unparse `p x;; `0:"[FAIL] GOT ",(unparse `p x)," NEED ",x]}
 
 test ",/(':'1+!#x)@\\:x"  / ColTim sublists
 test "@[A1;&\";\"=A1;:;\",\"]"
 test ",\\'(1_)\\a"
+test["@[;`hello;@;1](1;2)"]
 test "2*+/1+{x'y}/&'\"><\"=\\:"
 test "char:\"<>{}!\"\nsm:\"BETS \"!(\"T BE  \";\"  BE  \";\"T TTST\";\"TTTTTT\";\"T BE  \")\n\ng:{tokens:(#char)^char?x\n   states:\" \"sm[;]\\tokens   (+/a*0>':a:+\-/\"BE\"=\:states    / alt: -1+1^\"E B\"?states\n    +/\"T\"=&':states)}\n\n(11846;6285)~g input\n"
 
