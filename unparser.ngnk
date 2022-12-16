@@ -193,6 +193,7 @@ test["3/1 2 3";"3/1 2 3"]
 test["1:`hello";"1:`hello"]
 test["~(+/)";"~(+/)"]
 test["A1 2";"A1 2"]
+test["a.b.c+1";"a.b.c+1"]  / TODO fix
 
 / multi-line
 test["a:1;";"a:1\n"]
