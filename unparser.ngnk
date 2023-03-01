@@ -1,5 +1,5 @@
 /
-Copyright 2022 Chris Pearson
+Copyright 2023 Chris Pearson
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -22,8 +22,9 @@ v, n, vv (?), vn, nvn, nv, nn combos (any more?)
 (';f;f)       composition
 (';f)         each
 (+;(+;1 2);3) LHS brackets
-`name         variable
-,`name        symbol
+`a            variable
+`a`b`c        namespaced variable (a.b.c)
+,`a           symbol
 ,`a`b         symbol list
 (4:; 1; 2)    make list
 1 :'          LHS space required (disambiguate from 1: which is a verb)
