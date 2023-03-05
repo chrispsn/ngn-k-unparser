@@ -197,6 +197,7 @@ test["~(+/)";"~(+/)"]
 test["A1 2";"A1 2"]
 test["a.b";"a.b"]
 test["a.b.c+1";"a.b.c+1"]
+test["{x}[]";"{x}[]"]  / TODO don't show {x}(::)
 
 / multi-line
 test["a:1;";"a:1\n"]
