@@ -74,10 +74,11 @@ advarg:{[adv;x]
         wrap f x]
   ,/(left;,$adv)}
 
-monad:{$[`w=@*x; advarg . x  / TODO what about (')', \\, etc?
-        (`s`s~_@'*'x)&&/~{x~*x}'x; ,/(wrap;::)@'(M;R)@'x
-        `i`i~_@'x; ,/(wrap;::)@'(M;R)@'x
-        ,/(M;R)@'x]}@
+monad:{$[(::)~*|x; M[*x],"[]"
+         `w=@*x; advarg . x  / TODO what about (')', \\, etc?
+         (`s`s~_@'*'x)&&/~{x~*x}'x; ,/(wrap;::)@'(M;R)@'x
+         `i`i~_@'x; ,/(wrap;::)@'(M;R)@'x
+         ,/(M;R)@'x]}@
 
 f:{$[EMPTY~x; ,""
      ~^`i`f`c`o?_@x; ,`k x
@@ -197,7 +198,7 @@ test["~(+/)";"~(+/)"]
 test["A1 2";"A1 2"]
 test["a.b";"a.b"]
 test["a.b.c+1";"a.b.c+1"]
-test["{x}[]";"{x}[]"]  / TODO don't show {x}(::)
+test["{x}[]";"{x}[]"]
 
 / multi-line
 test["a:1;";"a:1\n"]
