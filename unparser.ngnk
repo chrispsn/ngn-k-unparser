@@ -74,7 +74,7 @@ advarg:{[adv;x]
         wrap f x]
   ,/(left;,$adv)}
 
-dyad:{$[`w=@*x; advarg . x  / TODO what about (')', \\, etc?
+monad:{$[`w=@*x; advarg . x  / TODO what about (')', \\, etc?
         (`s`s~_@'*'x)&&/~{x~*x}'x; ,/(wrap;::)@'(M;R)@'x
         `i`i~_@'x; ,/(wrap;::)@'(M;R)@'x
         ,/(M;R)@'x]}@
@@ -83,7 +83,7 @@ f:{$[EMPTY~x; ,""
      ~^`i`f`c`o?_@x; ,`k x
      1=#x; $[^`S`A?@x; ,$x; ,`k@*x]
      (1<#x)&`S=@x; ,"."/$x
-     2=#x; dyad x
+     2=#x; monad x
      LIST~*x; wrap sep[";"]@o'1_x
      comp x; ,/(M;o)@'1_x
      EMPTY~*x; sep["\n"]@{$[(::)~x;,"";f x]}'1_x
