@@ -138,6 +138,7 @@ test["a:1";"a:1"]
 test["a1:2";"a1:2"]
 test["A1:2";"A1:2"]
 test["(a;b):1 2";"(a;b):1 2"]
+test["a+:1";"a+:1"]  / TODO fix
 
 / applications
 test["+1";"+1"]
