@@ -62,10 +62,11 @@ sep:{,/@[(#i)#,,,x;&~i:2!!-1+2*#y;:;y]}
 
 L:{$[noun x; f x; wrap f x]}
 R:{$[((x~*x)|~`w=@*x)&(EMPTY~x)|^`u`v?@x; f x; wrap f x]}
-M:{$[comp x; wrap f x
-     `u=@x; ,-1_$x  / remove colon from monads
-     |/(EMPTY~$[2<#x; x 2; +]; `v=@x; `w=@*x; noun x); f x
-     wrap f x]}
+M:{$[comp y; wrap f y
+     x&`u=@y; ,$y   / don't remove colon for modified assignments
+     `u=@y; ,-1_$y  / remove colon from monads if monadic call
+     |/(EMPTY~$[2<#y; y 2; +]; `v=@y; `w=@*y; noun y); f y
+     wrap f y]}
 
 advarg:{[adv;x]
   left:$[comp x; wrap f x
@@ -74,11 +75,12 @@ advarg:{[adv;x]
         wrap f x]
   ,/(left;,$adv)}
 
-monad:{$[(::)~*|x; M[*x],"[]"
+monad:{$[(::)~*|x; (M[0]@*x),"[]"
          `w=@*x; advarg . x  / TODO what about (')', \\, etc?
-         (`s`s~_@'*'x)&&/~{x~*x}'x; ,/(wrap;::)@'(M;R)@'x
-         `i`i~_@'x; ,/(wrap;::)@'(M;R)@'x
-         ,/(M;R)@'x]}@
+         (`s`s~_@'*'x)&&/~{x~*x}'x; ,/(wrap;::)@'(M[0];R)@'x
+         `i`i~_@'x; ,/(wrap;::)@'(M[0];R)@'x
+         ,/(M[0];R)@'x]}@
+
 
 f:{$[EMPTY~x; ,""
      ~^`i`f`c`o?_@x; ,`k x
@@ -86,10 +88,10 @@ f:{$[EMPTY~x; ,""
      (1<#x)&`S=@x; ,"."/$x
      2=#x; monad x
      LIST~*x; wrap sep[";"]@o'1_x
-     comp x; ,/(M;o)@'1_x
+     comp x; ,/(M[0];o)@'1_x
      EMPTY~*x; sep["\n"]@{$[(::)~x;,"";f x]}'1_x
      noun x; ,/(f@*x; ,,"["; sep[";"]1_o'x; ,,"]")
-     ,/(L;M;R)@'x 1 0 2]}  / infix
+     ,/(L;M[1];R)@'x 1 0 2]}  / infix
 
 / Insert spaces
 
