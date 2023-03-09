@@ -202,6 +202,7 @@ test["A1 2";"A1 2"]
 test["a.b";"a.b"]
 test["a.b.c+1";"a.b.c+1"]
 test["{x}[]";"{x}[]"]
+test["()";"()"]  / TODO fix
 
 / multi-line
 test["a:1;";"a:1\n"]
