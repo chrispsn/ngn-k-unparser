@@ -213,6 +213,7 @@ test["a:1;b:2";"a:1\nb:2"]
 test:{$[x~unparse `p x;; `0:"[FAIL] GOT ",(unparse `p x)," NEED ",x]}
 
 test ",/(':'1+!#x)@\\:x"  / ColTim sublists
+test "x@*>#'x:^/^\\(,/,\\'(1_)\\)'(x;y)"  / longest common substring
 test "@[A1;&\";\"=A1;:;\",\"]"
 test ",\\'(1_)\\a"
 test["@[;`hello;@;1](1;2)"]
