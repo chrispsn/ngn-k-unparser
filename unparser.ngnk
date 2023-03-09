@@ -83,6 +83,7 @@ monad:{$[(::)~*|x; (M[0]@*x),"[]"
 
 
 f:{$[EMPTY~x; ,""
+     ()~x; ,"()"
      ~^`i`f`c`o?_@x; ,`k x
      1=#x; $[^`S`A?@x; ,$x; ,`k@*x]
      (1<#x)&`S=@x; ,"."/$x
@@ -202,7 +203,7 @@ test["A1 2";"A1 2"]
 test["a.b";"a.b"]
 test["a.b.c+1";"a.b.c+1"]
 test["{x}[]";"{x}[]"]
-test["()";"()"]  / TODO fix
+test["()";"()"]
 
 / multi-line
 test["a:1;";"a:1\n"]
