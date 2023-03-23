@@ -41,6 +41,7 @@ a:[;1]        knows that : is a fn here, not assignment
 TODO
 resolve inline TODOs
 unicode char eg (κ):{y!x y}
+simplify list reprs eg general list (1;2;3) => 1 2 3
 need different parse impl?:
 - preserve whitespace
 - preserve ; vs \n as separator
