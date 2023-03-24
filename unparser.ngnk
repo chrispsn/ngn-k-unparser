@@ -18,28 +18,43 @@ limitations under the License.
 ##  ngn/k unparser  ##
 ######################
 
-v, n, vv (?), vn, nvn, nv, nn combos (any more?)
-(';f;f)       composition
-(';f)         each
-(+;(+;1 2);3) LHS brackets
-`a            variable
-`a`b`c        namespaced variable (a.b.c)
-,`a           symbol
-,`a`b         symbol list
-(4:; 1; 2)    make list
-1 :'          LHS space required (disambiguate from 1: which is a verb)
-1 f'          LHS space required (1f read as single unit)
+Strategy:
+- Recursively process each syntax tree node. Figure out when to: 
+  - wrap a node in parens
+  - go infix or m-expr
+  - keep or remove a colon suffix.
+  Return a list of strings.
+- Insert any necessary disambiguation spaces between strings. Return a string.
+
+Needs to cover following grammar cases:
+v, n, vv, vn, nvn, nv, nn (any more?)
+
+Node               Syntax    Notes
+----               ------    -----
+1                  1         non-symbol atom
+1 2                1 2       non-symbol list
++                  +         verb
+`a                 a         name
+`a`b`c             a.b.c     name namespaced
+,`a                `a        symbol atom
+,`a`b              `a`b      symbol list
+(+:;1)             +1        monadic call
+(+;(+;1 2);3)      (1+2)+3   dyadic call
+(+;1;)             1+        projection
+(';+;+)            +         composition
+(4:;1;`a)          (1;a)     general list
+(:;(4:;`a;`b);..)  (a;b):..  destructure assignment
+(:;(`a;`b);..)     a[`b]:..  nested assignment
+(';+)              +'        adverb
+
+Tricky cases:
 a:[;1]        knows that : is a fn here, not assignment
 (+:)#         wrap LHS in parens to force noun
 +(#:)         wrap RHS in parens to force noun
 (1)1          wrap LHS in parens to prevent becoming one list literal
-(1 2)3        ^ see above
-(`a)`a        ^ see above
-(`a`a)`a      ^ see above
-
-(a;b):.. => (:;(4:;`a;`b);..)  destructure assignment
-a[`b]:.. => (:;(`a;`b);..)     nested assignment
-
+(1 2)3        ^
+(`a)`a        ^
+(`a`a)`a      ^
 
 TODO
 resolve inline TODOs
@@ -62,11 +77,8 @@ composition:{(2<#x)&(')~*x}
 
 / All fns below return a list of strings
 
-wrap:{(a;b):x; (,,a),y,,,b}
-(rounds;squares):wrap@'("()";"[]")
-
-sep:{,/@[(#i)#,,,x;&~i:2!!-1+2*#y;:;y]}
-(semicolons;newlines):sep@'";\n"
+(rounds;squares):{(a;b):x; (,,a),y,,,b}@'("()";"[]")              / wraps
+(semicolons;newlines):{,/@[(#i)#,,,x;&~i:2!!-1+2*#y;:;y]}@'";\n"  / joins
 
 L:{$[noun x; f x; rounds f x]}
 R:{$[((x~*x)|~`w=@*x)&(EMPTY~x)|^`u`v?@x; f x; rounds f x]}
@@ -107,7 +119,8 @@ f:{$[EMPTY~x; ,""
      infix x]}
 
 / Insert spaces
-
+/ 1 :'  LHS space required (disambiguate from 1: which is a verb)
+/ 1 f'  LHS space required (1f read as single unit)
 addspaces:{
   classes:"n: a a"@"0:;A[a{"'{(*y;*|y;*x)}':x
   notassgt:^("aa:";"an:")?classes
@@ -122,7 +135,7 @@ unparse: addspaces f@
 
 
 / #############
-/ ##  tests  ##
+/ ##  Tests  ##
 / #############
 
 / TODO: make this autodetect if being run as main (vs import), and enable if main
