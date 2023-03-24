@@ -98,7 +98,7 @@ f:{$[EMPTY~x; ,""
      LIST~*x; rounds semis@ o'1_x
      comp x; ,/(M[0];o)@'1_x
      EMPTY~*x; newlines@ {$[(::)~x;,"";f x]}'1_x
-     noun x; ,/(o@*x; ,,"["; semis 1_o'x; ,,"]")
+     noun x; o[*x],squares semis 1_o'x
      infix x]}
 
 / Insert spaces
