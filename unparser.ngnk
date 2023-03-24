@@ -37,11 +37,15 @@ a:[;1]        knows that : is a fn here, not assignment
 (`a)`a        ^ see above
 (`a`a)`a      ^ see above
 
+(a;b):.. => (:;(4:;`a;`b);..)  destructure assignment
+a[`b]:.. => (:;(`a;`b);..)     nested assignment
+
 
 TODO
 resolve inline TODOs
 unicode char eg (κ):{y!x y}
 simplify list reprs eg general list (1;2;3) => 1 2 3
+should M[0] be a L call instead? (remove first param of M)
 need different parse impl?:
 - preserve whitespace
 - preserve ; vs \n as separator
@@ -54,7 +58,7 @@ need different parse impl?:
 EMPTY:*|`p"1+"
 LIST:*`p"(1;1)"
 noun:{|/(1=*&(|x)~\:EMPTY; 3<#x; LIST~**x; ~^`i`f`c`s`o?_@*x)}
-comp:{(2<#x)&(')~*x}
+composition:{(2<#x)&(')~*x}
 
 / All fns below return a list of strings
 
@@ -68,26 +72,29 @@ newlines:sep"\n"
 
 L:{$[noun x; f x; rounds f x]}
 R:{$[((x~*x)|~`w=@*x)&(EMPTY~x)|^`u`v?@x; f x; rounds f x]}
-M:{$[comp y; rounds f y
-     x&`u=@y; ,$y   / don't remove colon for modified assignments
-     `u=@y; ,-1_$y  / remove colon from monads if monadic call
+M:{[modassgt;y]
+   $[composition y; rounds f y
+     modassgt&`u=@y; ,$y  / don't remove colon for modified assignments
+     `u=@y; ,-1_$y        / remove colon from monads if monadic call
      |/(EMPTY~$[2<#y; y 2; +]; `v=@y; `w=@*y; noun y); f y
      rounds f y]}
 
 advarg:{[adv;x]
-  left:$[comp x; rounds f x
+  left:$[composition x; rounds f x
         (`u=@x)&(')~adv; ,-1_$x  / +:' is +' if used as monad
         |/(`u=@x; `v=@x; `w=@*x; noun x); f x
         rounds f x]
   ,/(left;,$adv)}
 
-monad:{$[(::)~*|x; (M[0]@*x),"[]"
+monad:{$[(::)~*|x; M[0;*x],"[]"
          `w=@*x; advarg . x  / TODO what about (')', \\, etc?
-         (`s`s~_@'*'x)&&/~{x~*x}'x; ,/(rounds;::)@'(M[0];R)@'x
-         `i`i~_@'x; ,/(rounds;::)@'(M[0];R)@'x
+         (`i`i~_@'x)|(`s`s~_@'*'x)&&/~{x~*x}'x; ,/(rounds;::)@'(M[0];R)@'x
          ,/(M[0];R)@'x]}@
 
-infix:{,/(L;M[1];R)@'x 1 0 2}
+mexpr:{f[*x],squares semis 1_f'x}
+infix:{nestedassgt:(`s=@*x 1)&(`A=@x 1)&(:)~*x
+       left:$[nestedassgt; mexpr; L]
+       ,/(left;M[1];R)@'x 1 0 2}
 
 f:{$[EMPTY~x; ,""
      ()~x; ,"()"
@@ -96,9 +103,9 @@ f:{$[EMPTY~x; ,""
      (1<#x)&`S=@x; ,"."/$x
      2=#x; monad x
      LIST~*x; rounds semis@ o'1_x
-     comp x; ,/(M[0];o)@'1_x
+     composition x; ,/(M[0];o)@'1_x
      EMPTY~*x; newlines@ {$[(::)~x;,"";f x]}'1_x
-     noun x; o[*x],squares semis 1_o'x
+     noun x; mexpr x
      infix x]}
 
 / Insert spaces
@@ -155,7 +162,10 @@ roundtrip "a:1"
 roundtrip "a1:2"
 roundtrip "A1:2"
 roundtrip "(a;b):1 2"
+roundtrip "(a;(b;c)):(1;2 3)"
 roundtrip "a+:1"
+roundtrip "a[`b]:1"
+roundtrip "a[`b;`c`d]:1"
 
 / applications
 roundtrip "+1"
