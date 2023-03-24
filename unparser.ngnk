@@ -58,30 +58,36 @@ comp:{(2<#x)&(')~*x}
 
 / All fns below return a list of strings
 
-wrap:{(,,"("),x,,,")"}
-sep:{,/@[(#i)#,,,x;&~i:2!!-1+2*#y;:;y]}
+wrap:{(a;b):x; (,,a),y,,,b}
+rounds:wrap"()"
+squares:wrap"[]"
 
-L:{$[noun x; f x; wrap f x]}
-R:{$[((x~*x)|~`w=@*x)&(EMPTY~x)|^`u`v?@x; f x; wrap f x]}
-M:{$[comp y; wrap f y
+sep:{,/@[(#i)#,,,x;&~i:2!!-1+2*#y;:;y]}
+semis:sep";"
+newlines:sep"\n"
+
+L:{$[noun x; f x; rounds f x]}
+R:{$[((x~*x)|~`w=@*x)&(EMPTY~x)|^`u`v?@x; f x; rounds f x]}
+M:{$[comp y; rounds f y
      x&`u=@y; ,$y   / don't remove colon for modified assignments
      `u=@y; ,-1_$y  / remove colon from monads if monadic call
      |/(EMPTY~$[2<#y; y 2; +]; `v=@y; `w=@*y; noun y); f y
-     wrap f y]}
+     rounds f y]}
 
 advarg:{[adv;x]
-  left:$[comp x; wrap f x
+  left:$[comp x; rounds f x
         (`u=@x)&(')~adv; ,-1_$x  / +:' is +' if used as monad
         |/(`u=@x; `v=@x; `w=@*x; noun x); f x
-        wrap f x]
+        rounds f x]
   ,/(left;,$adv)}
 
 monad:{$[(::)~*|x; (M[0]@*x),"[]"
          `w=@*x; advarg . x  / TODO what about (')', \\, etc?
-         (`s`s~_@'*'x)&&/~{x~*x}'x; ,/(wrap;::)@'(M[0];R)@'x
-         `i`i~_@'x; ,/(wrap;::)@'(M[0];R)@'x
+         (`s`s~_@'*'x)&&/~{x~*x}'x; ,/(rounds;::)@'(M[0];R)@'x
+         `i`i~_@'x; ,/(rounds;::)@'(M[0];R)@'x
          ,/(M[0];R)@'x]}@
 
+infix:{,/(L;M[1];R)@'x 1 0 2}
 
 f:{$[EMPTY~x; ,""
      ()~x; ,"()"
@@ -89,11 +95,11 @@ f:{$[EMPTY~x; ,""
      1=#x; $[^`S`A?@x; ,$x; ,`k@*x]
      (1<#x)&`S=@x; ,"."/$x
      2=#x; monad x
-     LIST~*x; wrap sep[";"]@o'1_x
+     LIST~*x; rounds semis@ o'1_x
      comp x; ,/(M[0];o)@'1_x
-     EMPTY~*x; sep["\n"]@{$[(::)~x;,"";f x]}'1_x
-     noun x; ,/(o@*x; ,,"["; sep[";"]1_o'x; ,,"]")
-     ,/(L;M[1];R)@'x 1 0 2]}  / infix
+     EMPTY~*x; newlines@ {$[(::)~x;,"";f x]}'1_x
+     noun x; ,/(o@*x; ,,"["; semis 1_o'x; ,,"]")
+     infix x]}
 
 / Insert spaces
 
@@ -116,110 +122,115 @@ unparse: addspaces f@
 
 / TODO: make this autodetect if being run as main (vs import), and enable if main
 test:{$[y~unparse `p x;;`0:"[FAIL] GOT ",(unparse `p x)," NEED ",y]}
-/ uncomment following line to disable tests:
+roundtrip:{$[x~unparse `p x;; `0:"[FAIL] GOT ",(unparse `p x)," NEED ",x]}
+
+/ uncomment following lines to disable tests:
 / test:{y;}
+/ roundtrip:{}
 
 / pure data
-test["12";"12"]
-test["1e-2";"0.01"]
-test["1 2";"1 2"]
-test["1f";"1.0"]  / no roundtrip
-test["1 1f";"1.0 1.0"]
-test["hi";"hi"]
-test["\"hi\"";"\"hi\""]
-test["`hi";"`hi"]
-test["`hi`ho";"`hi`ho"]
-test[,"+";,"+"]
-test["+:";"+:"]
-test["+/";"+/"]
-test["+/'";"+/'"]
-test[t;t:"(\"hi\";1)"]
-test["::";"::"]
-test["A1";"A1"]
+roundtrip "12"
+roundtrip "1 2"
+roundtrip "0.0"
+roundtrip "hi"
+roundtrip "\"hi\""
+roundtrip "`hi"
+roundtrip "`hi`ho"
+roundtrip@,"+"
+roundtrip "+:"
+roundtrip "+/"
+roundtrip "+/'"
+roundtrip "(\"hi\";1)"
+roundtrip "::"
+roundtrip "A1"
+
+/ convenience literals
+test["0."] "0.0"
+test["1e-2"] "0.01"
+test["1f"] "1.0"
+test["1 1f"] "1.0 1.0"
 
 / assignments
-test["a:1";"a:1"]
-test["a1:2";"a1:2"]
-test["A1:2";"A1:2"]
-test["(a;b):1 2";"(a;b):1 2"]
-test["a+:1";"a+:1"]
+roundtrip "a:1"
+roundtrip "a1:2"
+roundtrip "A1:2"
+roundtrip "(a;b):1 2"
+roundtrip "a+:1"
 
 / applications
-test["+1";"+1"]
-test["1+";"1+"]
-test["(12)34";"(12)34"]
-test["12 34";"12 34"]
-test["a,b"; "a,b"]
-test["f x";"f x"]
-test["1+2+3"; "1+2+3"]
-test["(1+2)+3";"(1+2)+3"]
-test["1+(2+3)";"1+2+3"]
-test["1+(2+3)+4";"1+(2+3)+4"]
-test["(1+2)3";"(1+2)3"]
-test["(1+2)'3";"(1+2)'3"]
-test["(+1)+1";"(+1)+1"]
-test["+/1";"+/1"]
-test["+/\\";"+/\\"]
-test["1+/";"1+/"]
-test["(1+)/";"(1+)/"]
-test["{x}";"{x}"]
-test["++:";"++:"]
-test["++";"++"]
-test["+(+:)";"+(+:)"]
-test["+(+)";"+(+)"]
-test["f[1;2]";"f[1;2]"]
-test["+[1;2]";"1+2"]
-test["(+/1 2)3";"(+/1 2)3"]
-test["((+/'1 2)3)4";"((+/'1 2)3)4"]
-test["a+'b";"a+'b"]
-test["f[;]";"f[;]"]
+roundtrip "+1"
+roundtrip "1+"
+roundtrip "(12)34"
+roundtrip "12 34"
+roundtrip "a,b"
+roundtrip "f x"
+roundtrip "1+2+3"
+roundtrip "(1+2)+3"
+test["1+(2+3)"] "1+2+3"
+roundtrip "1+(2+3)+4"
+roundtrip "(1+2)3"
+roundtrip "(1+2)'3"
+roundtrip "(+1)+1"
+roundtrip "+/1"
+roundtrip "+/\\"
+roundtrip "1+/"
+roundtrip "(1+)/"
+roundtrip "{x}"
+roundtrip "++:"
+roundtrip "++"
+roundtrip "+(+:)"
+roundtrip "+(+)"
+roundtrip "f[1;2]"
+test["+[1;2]"] "1+2"
+roundtrip "(+/1 2)3"
+roundtrip "((+/'1 2)3)4"
+roundtrip "a+'b"
+roundtrip "f[;]"
 test["+[a;]";"a+"]
-test["+[;a]";"+[;a]"]
-test["@[a;1;b]";"@[a;1;b]"]
-test["@[a;1;:;b]";"@[a;1;:;b]"]
-test["(1+2;3)";"(1+2;3)"]
-test["(1)1";"(1)1"]
-test["(1 2)3";"(1 2)3"]
-test["(`a)`a";"(`a)`a"]
-test["(`a`b)`c";"(`a`b)`c"]
-test["(`a)`b`c";"(`a)`b`c"]
-test["`a`b 1";"`a`b 1"]
-test["+:/";"+:/"]
-test["1+:/";"1+:/"]
-test["p+:/";"p+:/"]
-test["$[a;1;2;3;4]";"$[a;1;2;3;4]"]
-test["1 f'2";"1 f'2"]
+roundtrip "+[;a]"
+roundtrip "@[a;1;b]"
+roundtrip "@[a;1;:;b]"
+roundtrip "(1+2;3)"
+roundtrip "(1)1"
+roundtrip "(1 2)3"
+roundtrip "(`a)`a"
+roundtrip "(`a`b)`c"
+roundtrip "(`a)`b`c"
+roundtrip "`a`b 1"
+roundtrip "+:/"
+roundtrip "1+:/"
+roundtrip "p+:/"
+roundtrip "$[a;1;2;3;4]"
+roundtrip "1 f'2"
 test["(++)2";"(++:)2"]  / TODO: is this right?
-test["f'[a;b;c]";"f'[a;b;c]"]
-test["1 :/";"1 :/"]
-test["(1+2)#";"(1+2)#"]
-test["(+:)#";"(+:)#"]
-test[":[;a]#";":[;a]#"]
-test["((1+2)+(3+4))#";"((1+2)+3+4)#"] 
-test["(1 2)f'";"1 2 f'"]
-test["3/1 2 3";"3/1 2 3"]
-test["1:`hello";"1:`hello"]
-test["~(+/)";"~(+/)"]
-test["A1 2";"A1 2"]
-test["a.b";"a.b"]
-test["a.b.c+1";"a.b.c+1"]
-test["{x}[]";"{x}[]"]
-test["()";"()"]
+roundtrip "f'[a;b;c]"
+roundtrip "1 :/"
+roundtrip "(1+2)#"
+roundtrip "(+:)#"
+roundtrip ":[;a]#"
+test["((1+2)+(3+4))#"] "((1+2)+3+4)#"
+test["(1 2)f'"] "1 2 f'"
+roundtrip "3/1 2 3"
+roundtrip "1:`hello"
+roundtrip "~(+/)"
+roundtrip "A1 2"
+roundtrip "a.b"
+roundtrip "a.b.c+1"
+roundtrip "{x}[]"
+roundtrip "()"
 
 / multi-line
 test["a:1;";"a:1\n"]
 test["a:1;b:2";"a:1\nb:2"]
 test["a:1\nb:2";"a:1\nb:2"]  / TODO fix
 
-/ real-world examples (test roundtrips)
-test:{$[x~unparse `p x;; `0:"[FAIL] GOT ",(unparse `p x)," NEED ",x]}
-
-test ",/(':'1+!#x)@\\:x"  / ColTim sublists
-test "x@*>#'x:^/^\\(,/,\\'(1_)\\)'(x;y)"  / longest common substring
-test "@[A1;&\";\"=A1;:;\",\"]"
-test ",\\'(1_)\\a"
-test["@[;`hello;@;1](1;2)"]
-test "2*+/1+{x'y}/&'\"><\"=\\:"
-test "char:\"<>{}!\"\nsm:\"BETS \"!(\"T BE  \";\"  BE  \";\"T TTST\";\"TTTTTT\";\"T BE  \")\n\ng:{tokens:(#char)^char?x\n   states:\" \"sm[;]\\tokens   (+/a*0>':a:+\-/\"BE\"=\:states    / alt: -1+1^\"E B\"?states\n    +/\"T\"=&':states)}\n\n(11846;6285)~g input\n"
+/ real-world examples
+roundtrip ",/(':'1+!#x)@\\:x"  / ColTim sublists
+roundtrip "x@*>#'x:^/^\\(,/,\\'(1_)\\)'(x;y)"  / longest common substring
+roundtrip "@[A1;&\";\"=A1;:;\",\"]"
+roundtrip ",\\'(1_)\\a"
+roundtrip "@[;`hello;@;1](1;2)"
+roundtrip "2*+/1+{x'y}/&'\"><\"=\\:"
+roundtrip "char:\"<>{}!\"\nsm:\"BETS \"!(\"T BE  \";\"  BE  \";\"T TTST\";\"TTTTTT\";\"T BE  \")\n\ng:{tokens:(#char)^char?x\n   states:\" \"sm[;]\\tokens   (+/a*0>':a:+\-/\"BE\"=\:states    / alt: -1+1^\"E B\"?states\n    +/\"T\"=&':states)}\n\n(11846;6285)~g input\n"
 
 \d .
