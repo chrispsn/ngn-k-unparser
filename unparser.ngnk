@@ -92,7 +92,7 @@ f:{$[EMPTY~x; ,""
      LIST~*x; wrap sep[";"]@o'1_x
      comp x; ,/(M[0];o)@'1_x
      EMPTY~*x; sep["\n"]@{$[(::)~x;,"";f x]}'1_x
-     noun x; ,/(f@*x; ,,"["; sep[";"]1_o'x; ,,"]")
+     noun x; ,/(o@*x; ,,"["; sep[";"]1_o'x; ,,"]")
      ,/(L;M[1];R)@'x 1 0 2]}  / infix
 
 / Insert spaces
