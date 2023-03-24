@@ -209,6 +209,7 @@ test["()";"()"]
 / multi-line
 test["a:1;";"a:1\n"]
 test["a:1;b:2";"a:1\nb:2"]
+test["a:1\nb:2";"a:1\nb:2"]  / TODO fix
 
 / real-world examples (test roundtrips)
 test:{$[x~unparse `p x;; `0:"[FAIL] GOT ",(unparse `p x)," NEED ",x]}
