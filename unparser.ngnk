@@ -63,12 +63,10 @@ composition:{(2<#x)&(')~*x}
 / All fns below return a list of strings
 
 wrap:{(a;b):x; (,,a),y,,,b}
-rounds:wrap"()"
-squares:wrap"[]"
+(rounds;squares):wrap@'("()";"[]")
 
 sep:{,/@[(#i)#,,,x;&~i:2!!-1+2*#y;:;y]}
-semis:sep";"
-newlines:sep"\n"
+(semicolons;newlines):sep@'";\n"
 
 L:{$[noun x; f x; rounds f x]}
 R:{$[((x~*x)|~`w=@*x)&(EMPTY~x)|^`u`v?@x; f x; rounds f x]}
@@ -91,7 +89,7 @@ monad:{$[(::)~*|x; M[0;*x],"[]"
          (`i`i~_@'x)|(`s`s~_@'*'x)&&/~{x~*x}'x; ,/(rounds;::)@'(M[0];R)@'x
          ,/(M[0];R)@'x]}@
 
-mexpr:{f[*x],squares semis 1_f'x}
+mexpr:{f[*x],squares semicolons 1_f'x}
 infix:{nestedassgt:(`s=@*x 1)&(`A=@x 1)&(:)~*x
        left:$[nestedassgt; mexpr; L]
        ,/(left;M[1];R)@'x 1 0 2}
@@ -102,7 +100,7 @@ f:{$[EMPTY~x; ,""
      1=#x; $[^`S`A?@x; ,$x; ,`k@*x]
      (1<#x)&`S=@x; ,"."/$x
      2=#x; monad x
-     LIST~*x; rounds semis@ o'1_x
+     LIST~*x; rounds semicolons @ o'1_x
      composition x; ,/(M[0];o)@'1_x
      EMPTY~*x; newlines@ {$[(::)~x;,"";f x]}'1_x
      noun x; mexpr x
