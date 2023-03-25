@@ -114,9 +114,11 @@ f:{$[EMPTY~x; ,""
      2=#x; monad x
      LIST~*x; rounds semicolons @ o'1_x
      composition x; ,/(M[0];o)@'1_x
-     EMPTY~*x; newlines@ {$[(::)~x;,"";f x]}'1_x
+     EMPTY~*x; squares semicolons@ {$[(::)~x;,"";f x]}'1_x
      noun x; mexpr x
      infix x]}
+
+toplevel:{$[EMPTY~*x;newlines 1_{$[(::)~x;"";f x]}'x;f x]}
 
 / Insert spaces
 / 1 :'  LHS space required (disambiguate from 1: which is a verb)
@@ -131,7 +133,7 @@ addspaces:{
 
 / Main entry point
 
-unparse: addspaces f@
+unparse: addspaces toplevel@
 
 
 / #############
