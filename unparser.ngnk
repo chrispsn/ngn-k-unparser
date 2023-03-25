@@ -76,8 +76,7 @@ need more complex parse impl?:
 
 \d unparser
 
-EMPTY:*|`p"1+"
-LIST:*`p"(1;1)"
+(EMPTY;LIST):*'`p'(";;";"(1;1)")
 noun:{|/(1=*&(|x)~\:EMPTY; 3<#x; LIST~**x; ~^`i`f`c`s`o?_@*x)}
 composition:{(2<#x)&(')~*x}
 
