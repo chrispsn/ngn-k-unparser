@@ -103,6 +103,7 @@ advarg:{[adv;x]
 
 monad:{$[(::)~*|x; M[0;*x],"[]"
          `w=@*x; advarg . x  / TODO what about (')', \\, etc?
+         EMPTY~* :/x; ,/(M[0]@*x;,," ";R[:/x])  / a [b] vs a[b] (progn vs call)
          (`i`i~_@'x)|(`s`s~_@'*'x)&&/~{x~*x}'x; ,/(rounds;::)@'(M[0];R)@'x
          ,/(M[0];R)@'x]}@
 
