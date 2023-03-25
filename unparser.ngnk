@@ -115,7 +115,7 @@ f:{$[~#x; ,`k x
      `S=@x; ,"."/$x
      EMPTY~*x; squares semicolons@ {$[(::)~x;,"";f x]}'1_x
      2=#x; monad x
-     LIST~*x; rounds semicolons @ o'1_x
+     LIST~*x; rounds semicolons@ o'1_x
      composition x; ,/(M[0];o)@'1_x
      noun x; mexpr x
      infix x]}
