@@ -46,6 +46,7 @@ Node               Syntax    Notes
 (:;(4:;`a;`b);..)  (a;b):..  destructure assignment
 (:;(`a;`b);..)     a[`b]:..  nested assignment
 (';+)              +'        adverb
+(;`a;`b)           [a;b]     progn
 
 Tricky cases:
 a:[;1]        knows that : is a fn here, not assignment
