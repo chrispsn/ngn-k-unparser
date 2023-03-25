@@ -239,11 +239,14 @@ roundtrip "a.b"
 roundtrip "a.b.c+1"
 roundtrip "{x}[]"
 roundtrip "()"
+roundtrip "$[a;[b;c];d]"  / TODO progn
+roundtrip "\\ls"          / TODO external commands
+roundtrip "\\t:10 a+b"    / TODO timing
 
 / multi-line
 test["a:1;";"a:1\n"]
 test["a:1;b:2";"a:1\nb:2"]
-test["a:1\nb:2";"a:1\nb:2"]  / TODO fix
+test["a:1\nb:2";"a:1\nb:2"]
 
 / real-world examples
 roundtrip ",/(':'1+!#x)@\\:x"  / ColTim sublists
