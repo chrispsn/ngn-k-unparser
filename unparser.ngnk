@@ -59,6 +59,7 @@ a:[;1]        knows that : is a fn here, not assignment
 
 TODO
 resolve inline TODOs
+call f 'triage'?
 unicode char eg (κ):{y!x y}
 simplify list reprs eg general list (1;2;3) => 1 2 3
 should M[0] be a L call instead? (remove first param of M)
@@ -107,15 +108,15 @@ infix:{nestedassgt:(`s=@*x 1)&(`A=@x 1)&(:)~*x
        left:$[nestedassgt; mexpr; L]
        ,/(left;M[1];R)@'x 1 0 2}
 
-f:{$[EMPTY~x; ,""
-     ()~x; ,"()"
-     ~^`i`f`c`o?_@x; ,`k x
-     1=#x; $[^`S`A?@x; ,$x; ,`k@*x]
-     (1<#x)&`S=@x; ,"."/$x
+f:{$[~#x; ,`k x
+     `s=@x; ,$x
+     ~^`c`f`i`o`u`v`w`x?_@x; ,`k x
+     1=#x; ,`k@*x
+     `S=@x; ,"."/$x
+     EMPTY~*x; squares semicolons@ {$[(::)~x;,"";f x]}'1_x
      2=#x; monad x
      LIST~*x; rounds semicolons @ o'1_x
      composition x; ,/(M[0];o)@'1_x
-     EMPTY~*x; squares semicolons@ {$[(::)~x;,"";f x]}'1_x
      noun x; mexpr x
      infix x]}
 
@@ -243,6 +244,7 @@ roundtrip "a.b.c+1"
 roundtrip "{x}[]"
 roundtrip "()"
 roundtrip "$[a;[b;c];d]"
+roundtrip "a [b]"         / TODO space required before progn
 roundtrip "a [b;c]"       / TODO space required before progn
 roundtrip "\\ls"          / TODO external commands
 roundtrip "\\t:10 a+b"    / TODO timing
