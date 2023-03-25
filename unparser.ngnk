@@ -114,8 +114,8 @@ infix:{nestedassgt:(`s=@*x 1)&(`A=@x 1)&(:)~*x
 
 f:{$[~#x; ,`k x
      `s=@x; ,$x
-     ~^`c`f`i`o`u`v`w`x?_@x; ,`k x
      1=#x; ,`k@*x
+     ~^`C`F`I?@x; ,`k x
      `S=@x; ,"."/$x
      EMPTY~*x; squares semicolons@ f'1_x
      2=#x; monad x
