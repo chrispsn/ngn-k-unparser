@@ -214,7 +214,7 @@ roundtrip "(+/1 2)3"
 roundtrip "((+/'1 2)3)4"
 roundtrip "a+'b"
 roundtrip "f[;]"
-test["+[a;]";"a+"]
+test["+[a;]"] "a+"
 roundtrip "+[;a]"
 roundtrip "@[a;1;b]"
 roundtrip "@[a;1;:;b]"
@@ -230,7 +230,7 @@ roundtrip "1+:/"
 roundtrip "p+:/"
 roundtrip "$[a;1;2;3;4]"
 roundtrip "1 f'2"
-test["(++)2";"(++:)2"]  / TODO: is this right?
+test["(++)2"] "(++:)2"  / TODO: is this right?
 roundtrip "f'[a;b;c]"
 roundtrip "1 :/"
 roundtrip "(1+2)#"
@@ -247,15 +247,15 @@ roundtrip "a.b.c+1"
 roundtrip "{x}[]"
 roundtrip "()"
 roundtrip "$[a;[b;c];d]"
-roundtrip "a [b]"         / TODO space required before progn
-roundtrip "a [b;c]"       / TODO space required before progn
+roundtrip "a [b]"
+roundtrip "a [b;c]"
 roundtrip "\\ls"          / TODO external commands
 roundtrip "\\t:10 a+b"    / TODO timing
 
 / multi-line
-test["a:1;";"a:1\n"]
-test["a:1;b:2";"a:1\nb:2"]
-test["a:1\nb:2";"a:1\nb:2"]
+test["a:1;"] "a:1\n"
+test["a:1;b:2"] "a:1\nb:2"
+roundtrip "a:1\nb:2"
 
 / real-world examples
 roundtrip ",/(':'1+!#x)@\\:x"  / ColTim sublists
