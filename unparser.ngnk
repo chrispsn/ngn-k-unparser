@@ -125,7 +125,6 @@ f:{$[~#x; ,`k x
 
 toplevel:{$[EMPTY~*x;newlines@ {$[(::)~x;();f x]}'1_x;f x]}
 
-/ Insert spaces
 / 1 :'  LHS space required (disambiguate from 1: which is a verb)
 / 1 f'  LHS space required (1f read as single unit)
 addspaces:{
