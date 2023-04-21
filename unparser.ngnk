@@ -217,6 +217,7 @@ roundtrip "@[;`hello;@;1](1;2)"
 roundtrip "2*+/1+{x'y}/&'\"><\"=\\:"
 roundtrip "char:\"<>{}!\"\nsm:\"BETS \"!(\"T BE  \";\"  BE  \";\"T TTST\";\"TTTTTT\";\"T BE  \")\n\ng:{tokens:(#char)^char?x\n   states:\" \"sm[;]\\tokens   (+/a*0>':a:+\-/\"BE\"=\:states    / alt: -1+1^\"E B\"?states\n    +/\"T\"=&':states)}\n\n(11846;6285)~g input\n"
 roundtrip "(a`b)?`c`d"
+/ roundtrip {x}@-1_"\"hi\""  / TODO fix
 
 \d .
 
