@@ -220,8 +220,7 @@ roundtrip "(a`b)?`c`d"
 
 \d .
 
-\\
-
+/
 
 Turns the output of `p"some code" back into a ngn/k code string.
 
