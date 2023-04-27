@@ -75,12 +75,13 @@ f:{$[~#x; ,`k x
 
 toplevel:{$[EMPTY~*x;newlines@ {$[(::)~x;();f x]}'1_x;f x]}
 
-/ 1 :'  LHS space required (disambiguate from 1: which is a verb)
-/ 1 f'  LHS space required (1f read as single unit)
+/ 1 :'    disambiguate from 1: which is a verb
+/ 1 f'    1f otherwise read as single unit
+/ {x} -1  otherwise read as subtraction {x}-1
 addspaces:{
-  classes:"n: a a"@"0:;A[a{"'{(*y;*|y;*x)}':x
+  classes:"m n: a a"@"-.0:;A[a{"'{(*y;*|y;*x)}':x
   notassgt:^("aa:";"an:")?classes
-  disamb:~^("n:";"aa";"na";"an";"nn")?1_'classes
+  disamb:~^(" m";"n:";"aa";"na";"an";"nn")?1_'classes
   disamb&:notassgt
   disamb[&1&#x]:1
   " "/,/'(&disamb)_x}
@@ -217,7 +218,7 @@ roundtrip "@[;`hello;@;1](1;2)"
 roundtrip "2*+/1+{x'y}/&'\"><\"=\\:"
 roundtrip "char:\"<>{}!\"\nsm:\"BETS \"!(\"T BE  \";\"  BE  \";\"T TTST\";\"TTTTTT\";\"T BE  \")\n\ng:{tokens:(#char)^char?x\n   states:\" \"sm[;]\\tokens   (+/a*0>':a:+\-/\"BE\"=\:states    / alt: -1+1^\"E B\"?states\n    +/\"T\"=&':states)}\n\n(11846;6285)~g input\n"
 roundtrip "(a`b)?`c`d"
-/ roundtrip {x}@-1_"\"hi\""  / TODO fix
+roundtrip "{x} -1_\"hi\""
 
 \d .
 
