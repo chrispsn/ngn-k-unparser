@@ -253,7 +253,7 @@ Node               Syntax    Notes
 (';+;+)            +         composition
 (4:;1;`a)          (1;a)     general list
 (:;(4:;`a;`b);..)  (a;b):..  destructure assignment
-(:;(`a;`b);..)     a[`b]:..  nested assignment
+(:;(`a;,`b);..)    a[`b]:..  nested assignment
 (';+)              +'        adverb
 (;`a;`b)           [a;b]     progn
 
