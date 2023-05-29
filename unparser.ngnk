@@ -59,7 +59,7 @@ monad:{$[(::)~*|x; M[0;*x],"[]"
          ,/(M[0];R)@'x]}@
 
 mexpr:{f[*x],squares semicolons 1_f'x}
-infix:{nestedassgt:(`S=@*x 1)&(`A=@x 1)&(:)~*x
+infix:{nestedassgt:(`S=@*x 1)&(:)~*x
        left:$[nestedassgt; mexpr; L]
        ,/(left;M[1];R)@'x 1 0 2}
 verb:{$[x~*x; ~^`u`v`w?@x; (~EMPTY~x 1)&(4>#x)&o@*x]}
