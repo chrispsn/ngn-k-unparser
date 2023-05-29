@@ -22,10 +22,13 @@ limitations under the License.
 \d unparser
 
 (EMPTY;LIST):*'`p'(";;";"(1;1)")
+isSymLiteral:{(1=#x)&~^`A`s?@x}
+
 noun:{|/(1=*&(|x)~\:EMPTY
-         3<#x; LIST~**x
-         (`s=_@*x)&(~x~*x)&1=#x
-         ~^`I`C`F`S`i`c`f`s`o?@x)}
+         3<#x
+         LIST~**x
+         isSymLiteral x
+         ~^`I`C`F`S`i`c`f`o?@x)}
 composition:{(2<#x)&(')~*x}
 
 / All fns below return a list of strings
@@ -52,20 +55,18 @@ advarg:{[adv;x]
 monad:{$[(::)~*|x; M[0;*x],"[]"
          `w=@*x; advarg . x  / TODO what about (')', \\, etc?
          EMPTY~* :/x; ,/(M[0]@*x;,," ";R[:/x])  / a [b] vs a[b] (progn vs call)
-         (`i`i~_@'x)|(`s`s~_@'*'x)&&/~{x~*x}'x; ,/(rounds;::)@'(M[0];R)@'x
+         (&/~^`i`f?_@'x)|&/isSymLiteral'x; ,/(rounds;::)@'(M[0];R)@'x
          ,/(M[0];R)@'x]}@
 
 mexpr:{f[*x],squares semicolons 1_f'x}
-infix:{nestedassgt:(`s=@*x 1)&(`A=@x 1)&(:)~*x
+infix:{nestedassgt:(`S=@*x 1)&(`A=@x 1)&(:)~*x
        left:$[nestedassgt; mexpr; L]
        ,/(left;M[1];R)@'x 1 0 2}
 verb:{$[x~*x; ~^`u`v`w?@x; (~EMPTY~x 1)&(4>#x)&o@*x]}
 
-f:{$[~#x; ,`k x
-     `s=@x; ,$x
+f:{$[`S=@x; ,"."/$x
+     (~#x)|`A<@x; ,`k x
      1=#x; ,`k@*x
-     `S=@x; ,"."/$x
-     `A<@x; ,`k x
      EMPTY~*x; squares semicolons@ o'1_x
      2=#x; monad x
      LIST~*x; rounds semicolons@ o'1_x
@@ -133,12 +134,15 @@ roundtrip "(a;b):1 2"
 roundtrip "(a;(b;c)):(1;2 3)"
 roundtrip "a+:1"
 roundtrip "a[`b]:1"
+roundtrip "a[`b`c]:1"
 roundtrip "a[`b;`c`d]:1"
 
 / applications
 roundtrip "+1"
 roundtrip "1+"
 roundtrip "(12)34"
+roundtrip "(1)2.0"
+roundtrip "(1.0)2"
 roundtrip "12 34"
 roundtrip "a,b"
 roundtrip "f x"
@@ -174,6 +178,7 @@ roundtrip "(1 2)3"
 roundtrip "(`a)`a"
 roundtrip "(`a`b)`c"
 roundtrip "(`a)`b`c"
+roundtrip "(`a`b)`c`d"
 roundtrip "`a`b 1"
 roundtrip "+:/"
 roundtrip "1+:/"
@@ -243,10 +248,10 @@ Node               Syntax    Notes
 1                  1         non-symbol atom
 1 2                1 2       non-symbol list
 +                  +         verb
-`a                 a         name
-`a`b`c             a.b.c     name namespaced
-,`a                `a        symbol atom
-,`a`b              `a`b      symbol list
+,`a                a         name
+`a`b`c             a.b.c     name namespaced (all names are type `S in the AST)
+`a                 `a        symbol atom (type `s)
+,`a`b              `a`b      symbol list (type `A, length 1)
 (+:;1)             +1        monadic call
 (+;(+;1 2);3)      (1+2)+3   dyadic call
 (+;1;)             1+        projection
