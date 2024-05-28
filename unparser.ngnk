@@ -1,5 +1,5 @@
 /
-Copyright 2023 Chris Pearson
+Copyright 2024 Chris Pearson
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -256,8 +256,8 @@ Node               Syntax    Notes
 (+;(+;1 2);3)      (1+2)+3   dyadic call
 (+;1;)             1+        projection
 (';+;+)            +         composition
-(4:;1;`a)          (1;a)     general list
-(:;(4:;`a;`b);..)  (a;b):..  destructure assignment
+(5:;1;`a)          (1;a)     general list
+(:;(5:;`a;`b);..)  (a;b):..  destructure assignment
 (:;(`a;,`b);..)    a[`b]:..  nested assignment
 (';+)              +'        adverb
 (;`a;`b)           [a;b]     progn
